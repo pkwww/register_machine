@@ -1,4 +1,4 @@
-class Token(var token: String, var tokenType: TokenType) {
+class Token(val token: String, val tokenType: TokenType) {
   override def toString: String = {
     token + " " + tokenType.toString()
   }
