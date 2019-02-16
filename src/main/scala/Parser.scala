@@ -1,17 +1,23 @@
 import java.util
 
 class Parser(tokenList: util.ArrayList[Token]) {
-  val _tokenList = tokenList
   var _next = 0
+
+  def parse(): Machine = {
+    new Machine(parseRegSpec(), parseProg())
+  }
 
   private def parseRegSpec(): util.ArrayList[Int] = {
     if (expect(REGISTERS)) {
       val regNum = parseNum()
       val registers = new util.ArrayList[Int]()
       var i = 0
-      while (_tokenList.get(_next).tokenType != NL && i < regNum) {
+      while (tokenList.get(_next).tokenType != NL && i < regNum) {
         registers.add(parseNum())
         i += 1
+      }
+      while (i < regNum) {
+        registers.add(0)
       }
       if (i >= regNum) {
         System.out.println("Warning: ignoring extra init value")
@@ -19,16 +25,39 @@ class Parser(tokenList: util.ArrayList[Token]) {
       consumeOverNewLine()
       registers
     } else {
-      throw new Exception("unexpected token, expected \"registers\", get: " + _tokenList.get(_next).token)
+      _next -= 1
+      throw new Exception("unexpected token, expected \"registers\", get: " + tokenList.get(_next).token)
     }
   }
 
-  private def parseInst(): Unit = {
+  private def parseProg(): util.ArrayList[Instruction] = {
+    val len = tokenList.size()
+    var prog = new util.ArrayList[Instruction]()
+    while (_next < len) {
+      prog.add(parseInst())
+      consumeOverNewLine()
+    }
+    prog
+  }
 
+  private def parseInst(): Instruction = {
+    val instToken = tokenList.get(_next)
+    if (isInc(instToken)) {
+      _next += 1
+      val regIndex = parseNum()
+      new IncInst(regIndex)
+    } else if (isDeczj(instToken)) {
+      _next += 1
+      val regIndex = parseNum()
+      val instIndex = parseNum()
+      new DeczjInst(regIndex, instIndex)
+    } else {
+      throw new Exception("unexpected token, expected \"inc\" or \"deczj\", get: " + instToken.token)
+    }
   }
 
   private def expect(tokenType: TokenType): Boolean = {
-    val isExpected = _tokenList.get(_next).tokenType.equals(tokenType)
+    val isExpected = tokenList.get(_next).tokenType.equals(tokenType)
     _next += 1
     isExpected
   }
@@ -49,8 +78,16 @@ class Parser(tokenList: util.ArrayList[Token]) {
     token.tokenType == NL
   }
 
+  private def isInc(token: Token): Boolean = {
+    token.tokenType == INC
+  }
+
+  private def isDeczj(token: Token): Boolean = {
+    token.tokenType == DECJZ
+  }
+
   private def parseNum(): Int = {
-    val token = _tokenList.get(_next)
+    val token = tokenList.get(_next)
     if (isNum(token)) {
       _next += 1
       token.token.toInt
@@ -60,7 +97,7 @@ class Parser(tokenList: util.ArrayList[Token]) {
   }
 
   private def parseRNum(): Int = {
-    val token = _tokenList.get(_next)
+    val token = tokenList.get(_next)
     if (isRNum(token)) {
       _next += 1
       token.token.substring(1).toInt
@@ -70,15 +107,15 @@ class Parser(tokenList: util.ArrayList[Token]) {
   }
 
   private def consumeNewLine(): Unit = {
-    val tokensLen = _tokenList.size()
+    val tokensLen = tokenList.size()
   }
 
   private def consumeOverNewLine(): Unit = {
-    val tokensLen = _tokenList.size()
-    while (_next < tokensLen && !isNewLine(_tokenList.get(_next))) {
+    val tokensLen = tokenList.size()
+    while (_next < tokensLen && !isNewLine(tokenList.get(_next))) {
       _next += 1
     }
-    while (_next < tokensLen && isNewLine(_tokenList.get(_next))) {
+    while (_next < tokensLen && isNewLine(tokenList.get(_next))) {
       _next += 1
     }
   }

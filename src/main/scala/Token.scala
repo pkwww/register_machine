@@ -4,7 +4,7 @@ class Token(val token: String, val tokenType: TokenType) {
   }
 }
 
-abstract class TokenType
+sealed trait TokenType
 
 case object EOF extends TokenType
 case object SP extends TokenType
