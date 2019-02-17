@@ -18,6 +18,7 @@ class Parser(tokenList: util.ArrayList[Token]) {
       }
       while (i < regNum) {
         registers.add(0)
+        i += 1
       }
       if (i >= regNum) {
         System.out.println("Warning: ignoring extra init value")
@@ -42,18 +43,27 @@ class Parser(tokenList: util.ArrayList[Token]) {
 
   private def parseInst(): Instruction = {
     val instToken = tokenList.get(_next)
-    if (isInc(instToken)) {
-      _next += 1
-      val regIndex = parseNum()
-      new IncInst(regIndex)
-    } else if (isDeczj(instToken)) {
-      _next += 1
-      val regIndex = parseNum()
-      val instIndex = parseNum()
-      new DeczjInst(regIndex, instIndex)
-    } else {
-      throw new Exception("unexpected token, expected \"inc\" or \"deczj\", get: " + instToken.token)
+    _next += 1
+    instToken match {
+      case Inc(_) => IncInst(parseRNum())
+      case Decjz(_) => DeczjInst(parseRNum(), parseNum())
+      case _ =>
+        _next -= 1
+        throw new Exception("unexpected token, expected \"inc\" or \"deczj\", get: " + instToken.token)
+
     }
+//    if (isInc(instToken)) {
+//      _next += 1
+//      val regIndex = parseRNum()
+//      new IncInst(regIndex)
+//    } else if (isDecjz(instToken)) {
+//      _next += 1
+//      val regIndex = parseRNum()
+//      val instIndex = parseNum()
+//      new DeczjInst(regIndex, instIndex)
+//    } else {
+//      throw new Exception("unexpected token, expected \"inc\" or \"deczj\", get: " + instToken.token)
+//    }
   }
 
   private def expect(tokenType: TokenType): Boolean = {
@@ -82,7 +92,7 @@ class Parser(tokenList: util.ArrayList[Token]) {
     token.tokenType == INC
   }
 
-  private def isDeczj(token: Token): Boolean = {
+  private def isDecjz(token: Token): Boolean = {
     token.tokenType == DECJZ
   }
 
