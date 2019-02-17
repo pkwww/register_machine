@@ -33,7 +33,7 @@ class Parser(tokenList: util.ArrayList[Token]) {
 
   private def parseProg(): util.ArrayList[Instruction] = {
     val len = tokenList.size()
-    var prog = new util.ArrayList[Instruction]()
+    val prog = new util.ArrayList[Instruction]()
     while (_next < len) {
       prog.add(parseInst())
       consumeOverNewLine()
@@ -45,8 +45,8 @@ class Parser(tokenList: util.ArrayList[Token]) {
     val instToken = tokenList.get(_next)
     _next += 1
     instToken match {
-      case Inc(_) => IncInst(parseRNum())
-      case Decjz(_) => DeczjInst(parseRNum(), parseNum())
+      case IncToken(_) => IncInst(parseRNum())
+      case DecjzToken(_) => DeczjInst(parseRNum(), parseNum())
       case _ =>
         _next -= 1
         throw new Exception("unexpected token, expected \"inc\" or \"deczj\", get: " + instToken.token)
@@ -72,9 +72,9 @@ class Parser(tokenList: util.ArrayList[Token]) {
     isExpected
   }
 
-  private def isRegistersToken(token: Token): Boolean = {
-    token.tokenType == REGISTERS
-  }
+//  private def isRegistersToken(token: Token): Boolean = {
+//    token.tokenType == REGISTERS
+//  }
 
   private def isNum(token: Token): Boolean = {
     token.tokenType == NUMBER
@@ -88,13 +88,13 @@ class Parser(tokenList: util.ArrayList[Token]) {
     token.tokenType == NL
   }
 
-  private def isInc(token: Token): Boolean = {
-    token.tokenType == INC
-  }
-
-  private def isDecjz(token: Token): Boolean = {
-    token.tokenType == DECJZ
-  }
+//  private def isInc(token: Token): Boolean = {
+//    token.tokenType == INC
+//  }
+//
+//  private def isDecjz(token: Token): Boolean = {
+//    token.tokenType == DECJZ
+//  }
 
   private def parseNum(): Int = {
     val token = tokenList.get(_next)
@@ -116,9 +116,12 @@ class Parser(tokenList: util.ArrayList[Token]) {
     }
   }
 
-  private def consumeNewLine(): Unit = {
-    val tokensLen = tokenList.size()
-  }
+//  private def consumeNewLine(): Unit = {
+//    val tokensLen = tokenList.size()
+//    while (_next < tokensLen && isNewLine(tokenList.get(_next))) {
+//      _next += 1
+//    }
+//  }
 
   private def consumeOverNewLine(): Unit = {
     val tokensLen = tokenList.size()

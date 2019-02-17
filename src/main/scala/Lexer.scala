@@ -41,9 +41,9 @@ class Lexer(input: String) {
     }
     val token = builder.toString()
     token match {
-      case "registers" => Registers(token)
-      case "inc" => Inc(token)
-      case "decjz" => Decjz(token)
+      case "registers" => RegistersToken(token)
+      case "inc" => IncToken(token)
+      case "decjz" => DecjzToken(token)
       case "r" => tokenRN(token)
       case _ => throw new Exception("unexpected token: " + token)
     }
@@ -61,7 +61,7 @@ class Lexer(input: String) {
       c = _input(_i)
     }
     val regNum = builder.toString()
-    Rnum(tokenR + regNum)
+    RnumToken(tokenR + regNum)
   }
 
   private def numberToken(): Token = {
@@ -73,13 +73,13 @@ class Lexer(input: String) {
       c = _input(_i)
     }
     val token = builder.toString()
-    Number(token)
+    NumberToken(token)
   }
 
   private def newLineToken(): Token = {
     val token = _input.substring(_i, _i + 1)
     _i += 1
-    NewLine(token)
+    NewLineToken(token)
   }
 
   private def consumeSpace(): Unit = {
@@ -103,17 +103,17 @@ class Lexer(input: String) {
     matchRegex(numRegex, c)
   }
 
-  private def isSpace(c: Char):Boolean = {
-    matchRegex(spRegex, c)
-  }
-
-  private def isNewLine(c: Char):Boolean = {
-    matchRegex(nlRegex, c)
-  }
-
-  private def isComment(c: Char):Boolean = {
-    c == '#'
-  }
+//  private def isSpace(c: Char):Boolean = {
+//    matchRegex(spRegex, c)
+//  }
+//
+//  private def isNewLine(c: Char):Boolean = {
+//    matchRegex(nlRegex, c)
+//  }
+//
+//  private def isComment(c: Char):Boolean = {
+//    c == '#'
+//  }
 
   private def matchRegex(regex: Regex, c: Char):Boolean = {
     val s = new Array[Char](1)

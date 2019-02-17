@@ -1,16 +1,16 @@
 sealed class Token(val token: String, val tokenType: TokenType) {
   override def toString: String = {
-    token + " " + tokenType.toString()
+    token + " " + tokenType.toString
   }
 }
 
-final case class Space(override val token: String) extends Token(token, SP)
-final case class NewLine(override val token: String) extends Token(token, NL)
-final case class Number(override val token: String) extends Token(token, NUMBER)
-final case class Registers(override val token: String) extends Token(token, REGISTERS)
-final case class Inc(override val token: String) extends Token(token, INC)
-final case class Decjz(override val token: String) extends Token(token, DECJZ)
-final case class Rnum(override val token: String) extends Token(token, RNUM)
+final case class SpaceToken(override val token: String) extends Token(token, SP)
+final case class NewLineToken(override val token: String) extends Token(token, NL)
+final case class NumberToken(override val token: String) extends Token(token, NUMBER)
+final case class RegistersToken(override val token: String) extends Token(token, REGISTERS)
+final case class IncToken(override val token: String) extends Token(token, INC)
+final case class DecjzToken(override val token: String) extends Token(token, DECJZ)
+final case class RnumToken(override val token: String) extends Token(token, RNUM)
 
 sealed trait TokenType
 
